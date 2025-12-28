@@ -1,0 +1,43 @@
+.main{
+  overflow-y: scroll;
+  height: 60vh;
+}
+.flex {
+  padding: 20px 15px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  font-size: 1.2rem;
+}
+.greenflex {
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+}
+.greens {
+  background-color: green;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+}
+.list {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.list span {
+  font-size: 1.5rem;
+}
+.list button {
+  padding: 15px 30px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  background-color: green;
+  color: #fff;
+}
+.list button:hover {
+  cursor: pointer;
+}

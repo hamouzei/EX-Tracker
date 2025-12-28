@@ -1,0 +1,93 @@
+.profile {
+  display: flex;
+  height: 100%;
+  margin-top: 20px;
+  row-gap: 30px;
+}
+
+.link a {
+  padding: 15px 20px;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  color: var(--color-grey-700);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+.link a:hover {
+  background-color: var(--color-brand-100);
+  color: var(--color-brand-700);
+  transform: translateX(5px);
+}
+.link a:global(.active) {
+  background-color: var(--color-brand-600);
+  color: white;
+  padding: 15px 20px;
+  width: 100%;
+}
+.profileImage img {
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border: 3px solid var(--color-brand-200);
+}
+.profileBtn {
+  display: none;
+}
+.profileDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+@media (max-width: 400px) {
+  .profileDisplay {
+    display: none;
+  }
+  .profileBtn {
+    display: block;
+    position: fixed;
+    top: 4px;
+    right: 4px;
+  }
+}
+@media (min-width: 401px) and (max-width: 800px) {
+  .profileDisplay {
+    display: none;
+  }
+  .profileBtn {
+    display: block;
+    top: 4px;
+    left: 4px;
+  }
+  .link a:global(.active) {
+    background-color: #f1efef;
+    padding: 20px 30px;
+  }
+}
+
+@media (min-width: 801px) and (max-width: 1800px) {
+  .profileDisplay {
+    display: flex;
+    flex-direction: column;
+    row-gap: 30px;
+    align-items: center;
+    width: 100%;
+  }
+
+  .profileBtn {
+    display: none;
+  }
+  .link a {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 40px;
+  }
+  .link a:global(.active) {
+    background-color: #f1efef;
+    padding: 20px 30px;
+  }
+}

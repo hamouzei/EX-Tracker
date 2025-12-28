@@ -1,0 +1,119 @@
+:root {
+  --color-brand-50: #eef2ff;
+  --color-brand-100: #e0e7ff;
+  --color-brand-200: #c7d2fe;
+  --color-brand-500: #6366f1;
+  --color-brand-600: #4f46e5;
+  --color-brand-700: #4338ca;
+  --color-brand-800: #3730a3;
+  --color-brand-900: #312e81;
+
+  --color-grey-0: #fff;
+  --color-grey-50: #f9fafb;
+  --color-grey-100: #f3f4f6;
+  --color-grey-200: #e5e7eb;
+  --color-grey-300: #d1d5db;
+  --color-grey-400: #9ca3af;
+  --color-grey-500: #6b7280;
+  --color-grey-600: #4b5563;
+  --color-grey-700: #374151;
+  --color-grey-800: #1f2937;
+  --color-grey-900: #111827;
+
+  --color-blue-100: #e0f2fe;
+  --color-blue-700: #0369a1;
+  --color-green-100: #dcfce7;
+  --color-green-700: #15803d;
+  --color-yellow-100: #fef9c3;
+  --color-yellow-700: #a16207;
+  --color-silver-100: #e5e7eb;
+  --color-silver-700: #374151;
+  --color-indigo-100: #e0e7ff;
+  --color-indigo-700: #4338ca;
+
+  --color-red-100: #fee2e2;
+  --color-red-700: #b91c1c;
+}
+.layouts {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--color-grey-100);
+}
+.main {
+  display: flex;
+  column-gap: 30px;
+  padding: 20px;
+  flex: 1;
+}
+.mainSpan1 {
+  background-color: var(--color-grey-0);
+  width: 20%;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  height: fit-content;
+}
+.mainSpan2 {
+  background-color: var(--color-grey-0);
+  width: 80%;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.header {
+  height: 80px;
+  background-color: var(--color-brand-600);
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+@media (max-width: 400px) {
+  .mainSpan2,
+  .mainSpan1 {
+    box-shadow: none;
+  }
+  .header {
+    height: 10vh;
+  }
+  .main {
+    margin-top: 30px;
+    column-gap: 0;
+  }
+  .mainSpan1 {
+    width: 0;
+  }
+}
+@media (min-width: 401px) and (max-width: 800px) {
+  .main {
+    column-gap: 0;
+    margin-top: 50px;
+  }
+  .mainSpan2,
+  .mainSpan1 {
+    box-shadow: none;
+  }
+  .mainSpan1 {
+    width: 0;
+  }
+}
+@media (min-width: 801px) and (max-width: 1300px) {
+  .main {
+    column-gap: 10px;
+    margin-top: 50px;
+  }
+  .layouts {
+    width: auto;
+  }
+  .mainSpan1 {
+    width: 15%;
+  }
+  .mainSpan2 {
+    width: 85%;
+    box-shadow: none;
+  }
+}

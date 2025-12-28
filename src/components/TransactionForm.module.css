@@ -1,0 +1,61 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 400px;
+}
+
+.toggle {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.toggle button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 2px solid transparent;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: var(--color-grey-100);
+  color: var(--color-grey-600);
+}
+
+.toggle button.active {
+  background-color: var(--color-brand-600);
+  color: #fff;
+  border-color: var(--color-brand-700);
+}
+
+.form input {
+  padding: 12px 15px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-grey-300);
+  transition: all 0.2s ease-in-out;
+}
+
+.form input:focus {
+  outline: none;
+  border-color: var(--color-brand-600);
+  box-shadow: 0 0 0 2px var(--color-brand-100);
+}
+
+.form button[type="submit"] {
+  padding: 15px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: var(--color-brand-600);
+  color: #fff;
+}
+
+.form button[type="submit"]:hover {
+  background-color: var(--color-brand-700);
+}
