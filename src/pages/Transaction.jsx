@@ -1,18 +1,19 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useMemo } from "react";
+import PropTypes from 'prop-types';
 import { TransactionContext } from "../contextApi/TransactionContext";
 import TransactionForm from "../components/TransactionForm";
 import style from "./Dashboard.module.css";
+import useTransactionCalculations from "../hooks/useTransactionCalculations";
 
 export default function Transaction() {
   const { state, dispatch } = useContext(TransactionContext);
   const { transactions } = state;
 
+  // Use the custom hook for calculations
+  const { totalIncome, totalExpense, totalBalance, incomeTransactions, expenseTransactions } = useTransactionCalculations(transactions);
+
   const [isAdding, setIsAdding] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
-
-  // Separate income and expenses
-  const incomeTransactions = transactions.filter(t => t.type === 'income');
-  const expenseTransactions = transactions.filter(t => t.type === 'expense');
 
   // Function to handle delete transaction
   const handleDelete = (id) => {
@@ -62,20 +63,19 @@ export default function Transaction() {
         <div className={style.metric}>
           <h3>Total Income</h3>
           <p className={style.income}>
-            ${incomeTransactions.reduce((acc, t) => acc + t.amount, 0)}
+            ${totalIncome}
           </p>
         </div>
         <div className={style.metric}>
           <h3>Total Expense</h3>
           <p className={style.expense}>
-            ${expenseTransactions.reduce((acc, t) => acc + t.amount, 0)}
+            ${totalExpense}
           </p>
         </div>
         <div className={style.metric}>
           <h3>Balance</h3>
           <p className={style.balance}>
-            ${incomeTransactions.reduce((acc, t) => acc + t.amount, 0) -
-              expenseTransactions.reduce((acc, t) => acc + t.amount, 0)}
+            ${totalBalance}
           </p>
         </div>
       </div>
@@ -185,3 +185,7 @@ export default function Transaction() {
     </div>
   );
 }
+
+Transaction.propTypes = {
+  transactions: PropTypes.array
+};

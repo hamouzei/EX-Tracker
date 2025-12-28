@@ -1,8 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useMemo } from "react";
+import PropTypes from 'prop-types';
 import Chart from "../components/Chart";
 import style from "./Dashboard.module.css";
 import { TransactionContext } from "../contextApi/TransactionContext";
 import TransactionForm from "../components/TransactionForm";
+import useTransactionCalculations from "../hooks/useTransactionCalculations";
 
 const TransactionModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
@@ -34,19 +36,22 @@ const TransactionModal = ({ isOpen, onClose }) => {
   );
 };
 
+TransactionModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired
+};
+
 export default function Dashboard() {
   const { state, dispatch } = useContext(TransactionContext);
   const { transactions } = state;
 
-  const totalIncome = transactions
-    .filter((t) => t.type === "income")
-    .reduce((acc, t) => acc + t.amount, 0);
+  // Use the custom hook for calculations
+  const { totalIncome, totalExpense, totalBalance } = useTransactionCalculations(transactions);
 
-  const totalExpense = transactions
-    .filter((t) => t.type === "expense")
-    .reduce((acc, t) => acc + t.amount, 0);
-
-  const totalBalance = totalIncome - totalExpense;
+  // Memoize the recent transactions to prevent unnecessary recalculations
+  const recentTransactions = useMemo(() => {
+    return transactions.slice(0, 5);
+  }, [transactions]);
 
   const [isModalOpen, setModalOpen] = useState(false);
 
@@ -95,7 +100,7 @@ export default function Dashboard() {
         <div className={`${style.card} ${style.recentActivityCard}`}>
           <h2>Recent Activity</h2>
           <ul className={style.recentActivityList}>
-            {transactions.slice(0, 5).map((transaction) => (
+            {recentTransactions.map((transaction) => (
               <li key={transaction.id} className={style.recentActivityItem}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                   <span>{transaction.description}</span>
@@ -133,3 +138,7 @@ export default function Dashboard() {
     </>
   );
 }
+
+Dashboard.propTypes = {
+  transactions: PropTypes.array
+};

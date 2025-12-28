@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import PropTypes from 'prop-types';
 import style from "./TransactionForm.module.css";
 import { TransactionContext } from "../contextApi/TransactionContext";
 
@@ -125,3 +126,14 @@ export default function TransactionForm({ onClose, transaction = null }) {
     </form>
   );
 }
+
+TransactionForm.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  transaction: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    type: PropTypes.oneOf(['income', 'expense']).isRequired,
+    amount: PropTypes.number.isRequired,
+    description: PropTypes.string.isRequired,
+    date: PropTypes.string.isRequired
+  })
+};
