@@ -1,9 +1,9 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import style from "./TransactionForm.module.css";
 import { TransactionContext } from "../contextApi/TransactionContext";
 
-export default function TransactionForm({ onClose }) {
+export default function TransactionForm({ onClose, transaction = null }) {
   const [transactionType, setTransactionType] = useState("expense");
   const { dispatch } = useContext(TransactionContext);
   const {
@@ -11,6 +11,7 @@ export default function TransactionForm({ onClose }) {
     handleSubmit,
     reset,
     formState: { errors },
+    setValue
   } = useForm();
 
   // Generate unique ID for transaction
@@ -22,11 +23,34 @@ export default function TransactionForm({ onClose }) {
     return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
   };
 
+  // Set form values when editing a transaction
+  useEffect(() => {
+    if (transaction) {
+      setValue('description', transaction.description);
+      setValue('amount', transaction.amount);
+      setValue('date', transaction.date);
+      setTransactionType(transaction.type);
+    } else {
+      // Reset form when not editing
+      reset();
+      setTransactionType('expense');
+    }
+  }, [transaction, setValue, reset]);
+
   const onSubmit = (data) => {
-    dispatch({
-      type: "ADD_TRANSACTION",
-      payload: { ...data, type: transactionType, id: generateUniqueId() },
-    });
+    if (transaction) {
+      // Update existing transaction
+      dispatch({
+        type: "UPDATE_TRANSACTION",
+        payload: { ...data, type: transactionType, id: transaction.id },
+      });
+    } else {
+      // Add new transaction
+      dispatch({
+        type: "ADD_TRANSACTION",
+        payload: { ...data, type: transactionType, id: generateUniqueId() },
+      });
+    }
     reset();
     onClose();
   };
@@ -80,7 +104,7 @@ export default function TransactionForm({ onClose }) {
       <input
         type="date"
         max={new Date().toISOString().split('T')[0]}
-        {...register("date", { 
+        {...register("date", {
           required: "Date is required",
           validate: (value) => {
             const selectedDate = new Date(value);
@@ -95,7 +119,9 @@ export default function TransactionForm({ onClose }) {
       />
       {errors.date && <p>{errors.date.message}</p>}
 
-      <button type="submit">Save Transaction</button>
+      <button type="submit">
+        {transaction ? "Update Transaction" : "Save Transaction"}
+      </button>
     </form>
   );
 }

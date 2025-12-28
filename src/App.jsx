@@ -6,6 +6,7 @@ import {
 import Dashboard from "./pages/Dashboard";
 import AppLayout from "./ui/Applayout";
 import Transaction from "./pages/Transaction";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -18,7 +19,11 @@ const App = () => {
     },
   ]);
 
-  return <RouterProvider router={router} />;
+  return (
+    <ErrorBoundary>
+      <RouterProvider router={router} />
+    </ErrorBoundary>
+  );
 };
 
 export default App;

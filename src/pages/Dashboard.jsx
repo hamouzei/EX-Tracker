@@ -35,7 +35,7 @@ const TransactionModal = ({ isOpen, onClose }) => {
 };
 
 export default function Dashboard() {
-  const { state } = useContext(TransactionContext);
+  const { state, dispatch } = useContext(TransactionContext);
   const { transactions } = state;
 
   const totalIncome = transactions
@@ -49,6 +49,16 @@ export default function Dashboard() {
   const totalBalance = totalIncome - totalExpense;
 
   const [isModalOpen, setModalOpen] = useState(false);
+
+  // Function to handle delete transaction
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this transaction?")) {
+      dispatch({
+        type: "DELETE_TRANSACTION",
+        payload: id
+      });
+    }
+  };
 
   return (
     <>
@@ -87,15 +97,33 @@ export default function Dashboard() {
           <ul className={style.recentActivityList}>
             {transactions.slice(0, 5).map((transaction) => (
               <li key={transaction.id} className={style.recentActivityItem}>
-                <span>{transaction.description}</span>
-                <span
-                  className={
-                    transaction.type === "income" ? style.income : style.expense
-                  }
-                >
-                  {transaction.type === "income" ? "+" : "-"}$
-                  {transaction.amount.toFixed(2)}
-                </span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                  <span>{transaction.description}</span>
+                  <div>
+                    <span
+                      className={
+                        transaction.type === "income" ? style.income : style.expense
+                      }
+                    >
+                      {transaction.type === "income" ? "+" : "-"}$
+                      {transaction.amount.toFixed(2)}
+                    </span>
+                    <button
+                      onClick={() => handleDelete(transaction.id)}
+                      style={{
+                        marginLeft: '10px',
+                        backgroundColor: '#f87171',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        padding: '4px 8px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
               </li>
             ))}
           </ul>

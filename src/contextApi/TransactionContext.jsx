@@ -1,16 +1,37 @@
-import React, { createContext, useReducer } from "react";
+import React, { createContext, useReducer, useEffect } from "react";
 
 const TransactionContext = createContext();
 
+// Load transactions from localStorage
+const loadTransactions = () => {
+  try {
+    const storedTransactions = localStorage.getItem("expense_tracker_transactions");
+    return storedTransactions ? JSON.parse(storedTransactions) : [];
+  } catch (error) {
+    console.error("Error loading transactions from localStorage:", error);
+    return [];
+  }
+};
+
+// Save transactions to localStorage
+const saveTransactions = (transactions) => {
+  try {
+    localStorage.setItem("expense_tracker_transactions", JSON.stringify(transactions));
+  } catch (error) {
+    console.error("Error saving transactions to localStorage:", error);
+    // Graceful degradation - don't crash the app if localStorage fails
+  }
+};
+
 const initialState = {
-  transactions: [],
+  transactions: loadTransactions(), // Load from localStorage on initialization
 };
 
 // Validate transaction object has all required fields
 function validateTransaction(transaction) {
   const requiredFields = ['id', 'type', 'amount', 'description', 'date'];
   const missingFields = requiredFields.filter(field => !transaction[field]);
-  
+
   if (missingFields.length > 0) {
     console.error('Invalid transaction: Missing required fields', missingFields);
     return false;
@@ -53,9 +74,34 @@ function transactionReducer(state, action) {
         console.error('Transaction validation failed, transaction not added');
         return state; // Return current state if validation fails
       }
+      const newTransactions = [action.payload, ...state.transactions];
+      saveTransactions(newTransactions); // Save to localStorage
       return {
         ...state,
-        transactions: [action.payload, ...state.transactions],
+        transactions: newTransactions,
+      };
+    case "DELETE_TRANSACTION":
+      const updatedTransactions = state.transactions.filter(
+        transaction => transaction.id !== action.payload
+      );
+      saveTransactions(updatedTransactions); // Save to localStorage
+      return {
+        ...state,
+        transactions: updatedTransactions,
+      };
+    case "UPDATE_TRANSACTION":
+      // Validate transaction before updating
+      if (!validateTransaction(action.payload)) {
+        console.error('Transaction validation failed, transaction not updated');
+        return state; // Return current state if validation fails
+      }
+      const transactionsAfterUpdate = state.transactions.map(
+        transaction => transaction.id === action.payload.id ? action.payload : transaction
+      );
+      saveTransactions(transactionsAfterUpdate); // Save to localStorage
+      return {
+        ...state,
+        transactions: transactionsAfterUpdate,
       };
     default:
       return state;
@@ -64,6 +110,11 @@ function transactionReducer(state, action) {
 
 function TransactionProvider({ children }) {
   const [state, dispatch] = useReducer(transactionReducer, initialState);
+
+  // Save to localStorage whenever state.transactions changes
+  useEffect(() => {
+    saveTransactions(state.transactions);
+  }, [state.transactions]);
 
   return (
     <TransactionContext.Provider value={{ state, dispatch }}>
