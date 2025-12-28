@@ -13,10 +13,19 @@ export default function TransactionForm({ onClose }) {
     formState: { errors },
   } = useForm();
 
+  // Generate unique ID for transaction
+  const generateUniqueId = () => {
+    // Use crypto.randomUUID() for modern browsers, fallback to timestamp + random
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      return crypto.randomUUID();
+    }
+    return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+  };
+
   const onSubmit = (data) => {
     dispatch({
       type: "ADD_TRANSACTION",
-      payload: { ...data, type: transactionType, id: Date.now() },
+      payload: { ...data, type: transactionType, id: generateUniqueId() },
     });
     reset();
     onClose();
@@ -51,16 +60,38 @@ export default function TransactionForm({ onClose }) {
       <input
         type="number"
         placeholder="Amount"
+        step="0.01"
+        min="0.01"
         {...register("amount", {
           required: "Amount is required",
           valueAsNumber: true,
+          min: {
+            value: 0.01,
+            message: "Amount must be greater than 0",
+          },
+          max: {
+            value: 999999999,
+            message: "Amount is too large",
+          },
         })}
       />
       {errors.amount && <p>{errors.amount.message}</p>}
 
       <input
         type="date"
-        {...register("date", { required: "Date is required" })}
+        max={new Date().toISOString().split('T')[0]}
+        {...register("date", { 
+          required: "Date is required",
+          validate: (value) => {
+            const selectedDate = new Date(value);
+            const today = new Date();
+            today.setHours(23, 59, 59, 999); // End of today
+            if (selectedDate > today) {
+              return "Date cannot be in the future";
+            }
+            return true;
+          }
+        })}
       />
       {errors.date && <p>{errors.date.message}</p>}
 
