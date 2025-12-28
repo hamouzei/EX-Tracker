@@ -1,6 +1,9 @@
 import React, { useContext, useState, useMemo } from "react";
 import PropTypes from 'prop-types';
 import Chart from "../components/Chart";
+import EmptyState from "../components/EmptyState";
+import ExportButton from "../components/ExportButton";
+import { useToast } from "../contextApi/ToastContext";
 import style from "./Dashboard.module.css";
 import { TransactionContext } from "../contextApi/TransactionContext";
 import TransactionForm from "../components/TransactionForm";
@@ -44,9 +47,10 @@ TransactionModal.propTypes = {
 export default function Dashboard() {
   const { state, dispatch } = useContext(TransactionContext);
   const { transactions } = state;
+  const { addToast } = useToast();
 
   // Use the custom hook for calculations
-  const { totalIncome, totalExpense, totalBalance } = useTransactionCalculations(transactions);
+  const { totalIncome, totalExpense, totalBalance, expensesByCategory, incomeByCategory } = useTransactionCalculations(transactions);
 
   // Memoize the recent transactions to prevent unnecessary recalculations
   const recentTransactions = useMemo(() => {
@@ -62,6 +66,7 @@ export default function Dashboard() {
         type: "DELETE_TRANSACTION",
         payload: id
       });
+      addToast("Transaction deleted successfully!", "success");
     }
   };
 
@@ -99,39 +104,70 @@ export default function Dashboard() {
 
         <div className={`${style.card} ${style.recentActivityCard}`}>
           <h2>Recent Activity</h2>
-          <ul className={style.recentActivityList}>
-            {recentTransactions.map((transaction) => (
-              <li key={transaction.id} className={style.recentActivityItem}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                  <span>{transaction.description}</span>
-                  <div>
-                    <span
-                      className={
-                        transaction.type === "income" ? style.income : style.expense
-                      }
-                    >
-                      {transaction.type === "income" ? "+" : "-"}$
-                      {transaction.amount.toFixed(2)}
-                    </span>
-                    <button
-                      onClick={() => handleDelete(transaction.id)}
-                      style={{
-                        marginLeft: '10px',
-                        backgroundColor: '#f87171',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        padding: '4px 8px',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      Delete
-                    </button>
+          {recentTransactions.length > 0 ? (
+            <ul className={style.recentActivityList}>
+              {recentTransactions.map((transaction) => (
+                <li key={transaction.id} className={style.recentActivityItem}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                    <span>{transaction.description}</span>
+                    <div>
+                      <span
+                        className={
+                          transaction.type === "income" ? style.income : style.expense
+                        }
+                      >
+                        {transaction.type === "income" ? "+" : "-"}$
+                        {transaction.amount.toFixed(2)}
+                      </span>
+                      <button
+                        onClick={() => handleDelete(transaction.id)}
+                        style={{
+                          marginLeft: '10px',
+                          backgroundColor: '#f87171',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          padding: '4px 8px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <EmptyState
+              title="No Recent Transactions"
+              description="Your recent transactions will appear here. Add your first transaction to get started."
+              action={
+                <button
+                  className={style.addTransactionBtn}
+                  onClick={() => setModalOpen(true)}
+                >
+                  Add Transaction
+                </button>
+              }
+            />
+          )}
+        </div>
+
+        <div className={`${style.card} ${style.categoryBreakdownCard}`}>
+          <h2>Expense Breakdown by Category</h2>
+          <div className={style.categoryBreakdown}>
+            {Object.entries(expensesByCategory).length > 0 ? (
+              Object.entries(expensesByCategory).map(([category, amount]) => (
+                <div key={category} className={style.categoryItem}>
+                  <span>{category}</span>
+                  <span className={style.expense}>-${amount.toFixed(2)}</span>
                 </div>
-              </li>
-            ))}
-          </ul>
+              ))
+            ) : (
+              <p>No expenses to display</p>
+            )}
+          </div>
         </div>
       </div>
       <TransactionModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} />

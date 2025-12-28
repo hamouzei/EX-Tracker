@@ -29,7 +29,7 @@ const initialState = {
 
 // Validate transaction object has all required fields
 function validateTransaction(transaction) {
-  const requiredFields = ['id', 'type', 'amount', 'description', 'date'];
+  const requiredFields = ['id', 'type', 'amount', 'description', 'date', 'category'];
   const missingFields = requiredFields.filter(field => !transaction[field]);
 
   if (missingFields.length > 0) {
@@ -63,18 +63,28 @@ function validateTransaction(transaction) {
     return false;
   }
 
+  if (typeof transaction.category !== 'string' || !transaction.category.trim()) {
+    console.error('Invalid transaction: category must be a non-empty string');
+    return false;
+  }
+
   return true;
 }
 
 function transactionReducer(state, action) {
   switch (action.type) {
     case "ADD_TRANSACTION":
+      // Add default category if not provided
+      const transactionWithCategory = {
+        ...action.payload,
+        category: action.payload.category || 'Other'
+      };
       // Validate transaction before adding
-      if (!validateTransaction(action.payload)) {
+      if (!validateTransaction(transactionWithCategory)) {
         console.error('Transaction validation failed, transaction not added');
         return state; // Return current state if validation fails
       }
-      const newTransactions = [action.payload, ...state.transactions];
+      const newTransactions = [transactionWithCategory, ...state.transactions];
       saveTransactions(newTransactions); // Save to localStorage
       return {
         ...state,

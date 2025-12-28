@@ -30,7 +30,14 @@
   border-color: var(--color-brand-700);
 }
 
-.form input {
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form input,
+.form select {
   padding: 12px 15px;
   font-size: 1rem;
   border-radius: 8px;
@@ -38,10 +45,24 @@
   transition: all 0.2s ease-in-out;
 }
 
-.form input:focus {
+.form input:focus,
+.form select:focus {
   outline: none;
   border-color: var(--color-brand-600);
   box-shadow: 0 0 0 2px var(--color-brand-100);
+}
+
+.form input.error,
+.form select.error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+.errorMessage {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 3px;
+  display: block;
 }
 
 .form button[type="submit"] {

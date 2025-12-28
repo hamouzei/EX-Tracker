@@ -7,6 +7,8 @@ import Dashboard from "./pages/Dashboard";
 import AppLayout from "./ui/Applayout";
 import Transaction from "./pages/Transaction";
 import ErrorBoundary from "./components/ErrorBoundary";
+import { ToastProvider } from "./contextApi/ToastContext";
+import ToastContainer from "./components/ToastContainer";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -21,7 +23,10 @@ const App = () => {
 
   return (
     <ErrorBoundary>
-      <RouterProvider router={router} />
+      <ToastProvider>
+        <RouterProvider router={router} />
+        <ToastContainer />
+      </ToastProvider>
     </ErrorBoundary>
   );
 };
