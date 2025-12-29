@@ -71,7 +71,7 @@ function validateTransaction(transaction) {
   return true;
 }
 
-function transactionReducer(state, action) {
+export function transactionReducer(state, action) {
   switch (action.type) {
     case "ADD_TRANSACTION":
       // Add default category if not provided
